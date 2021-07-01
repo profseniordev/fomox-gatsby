@@ -1,0 +1,33 @@
+.featured__post {
+	margin-top: 1rem;
+	&-heading {
+		font-size: 14px;
+		font-weight: bolder;
+		text-transform: uppercase;
+		padding: 10px 0;
+		border-bottom: 1px solid $border-color;
+		margin-bottom: 1.5rem;
+		color: #c1c2c5;
+	}
+
+	&-image {
+		img {
+			border-radius: 5px;
+			margin-bottom: 10px;
+			width: 100%;
+		}
+	}
+
+	&-title {
+		font-weight: bold;
+		text-decoration: none;
+		font-size: 18px;
+		color: white;
+		font-weight: 600;
+		margin-bottom: 1rem;
+		display: block;
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}

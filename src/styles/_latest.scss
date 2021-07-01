@@ -1,0 +1,33 @@
+.latest__post {
+	&-heading {
+		font-size: 14px;
+		font-weight: bolder;
+		text-transform: uppercase;
+		padding: 10px 0;
+		border-bottom: 1px solid $border-color;
+		margin-bottom: 20px;
+		color: #c1c2c5;
+	}
+
+	&-single {
+		margin-bottom: 1.5rem;
+	}
+
+	&-image {
+		img {
+			border-radius: 20px;
+			margin-bottom: 8px;
+			max-width: 80%;
+		}
+	}
+
+	&-title {
+		text-decoration: none;
+		font-size: 18px;
+		color: white;
+		font-weight: bolder;
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}

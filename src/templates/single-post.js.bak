@@ -1,0 +1,213 @@
+import kebabCase from "lodash/kebabCase"
+import React, { Component } from 'react'
+import Main from './master'
+import Single from '../components/posts/single'
+import Related from '../components/posts/related'
+import Tags from '../components/posts/tags'
+import FeaturedPosts from '../components/posts/featured'
+import Latest from '../components/posts/latest'
+import Share from '../components/posts/share'
+import { Row, Col, Button } from 'react-bootstrap'
+import { graphql, Link } from "gatsby"
+import SEO from './seo/seo'
+
+class Post extends Component {
+  render() {
+    
+        const { allPosts, relatedPosts, site, featuredPosts, latestPosts } = this.props.data
+        const { data } = this.props.data.airtable
+        const { title, tags } = data
+        const { twitterHandle } = site.siteMetadata
+        const url = site.siteMetadata.siteUrl
+        const { next, prev } = this.props.pageContext
+        let allTags = []
+        let slug = this.props.path
+        // Pushing all tags into allTags array
+        for (var i = 0; i <= tags.length-1; i++) {
+            allTags.push(<Link key={i} to={`/tags/${kebabCase(tags[i])}/`}><Button variant="warning" size="sm" className="mr-2 mb-2 latest__tag-single">{tags[i]} </Button></Link>)
+        }
+
+        // Post Share
+        let share = <Share socialConfig={{ twitterHandle, config: { url: `${url}${slug}`, title, }, }} tags={tags}/>
+
+        // Post navigation
+        let prevLink;
+        let nextLink;
+        if (prev !== null) {
+            prevLink = <Link to={prev.slug} className="next pull-left"><Button variant="outline-secondary">Previous</Button></Link>
+        }
+        if (next !== null) {
+            nextLink = <Link to={next.slug} className="next pull-right"><Button variant="outline-secondary">Next</Button></Link>;
+        }
+        // Yes I am not using infinite scroll in master branch.
+        return (
+          <Main>
+            <SEO 
+                title={data.title} 
+                excerpt={data.excerpt}
+                canonical={data.slug}
+                datetime={data.datetime}
+                //tags={data.tags}
+                slug={data.slug}
+                image={ data.image ? data.image[0].url : undefined }
+            />
+            <Row className="full__height">
+                <Col md={3} className="left__sidebar d-none d-md-block">
+                    <Tags tags={allPosts.group} />
+                    <FeaturedPosts posts={featuredPosts.nodes}/>
+                </Col>
+                <Col md={6} className="main__section"> 
+                    <Single title={data.title} 
+                            date={data.date}     
+                            author={data.author} 
+                            photo={data.image}
+                            excerpt={data.excerpt}
+                            body={data.body}
+                            share={share}
+                            url = {data.url}
+                            cat = {data.categorisation}
+                    />
+                    <Row>
+                        <Col md={{ offset: 1, span: 10 }}>
+                            <div className="post-navigation">
+                                {prevLink}
+                                {nextLink}
+                            </div>
+                            <div className="clearfix"></div>
+                            <div className="post-related">
+                                <div className="tags">
+                                    {allTags}
+                                </div>
+                                <Related posts={relatedPosts.nodes}/>
+                            </div>
+                        </Col>
+                    </Row>
+                </Col>
+                <Col md={3} className="right__sidebar d-none d-md-block">
+                    <Latest posts={latestPosts.nodes}/>
+                </Col>
+            </Row>
+          </Main>
+        )
+  }
+}
+
+export default Post;
+
+export const query = graphql`
+   	query($slug: String!, $tag: String) {
+        site {
+            siteMetadata {
+              description
+              image
+              title
+              twitterHandle
+              siteUrl
+            }
+          }
+        featuredPosts: allAirtable(limit: 99, sort: {order: DESC, fields: data___date}
+            filter: {data: {tags: {in: ["featured", "politics", "society", "science", "travel"]}}}
+        ) {
+            nodes {
+                data {
+                    title
+                    excerpt
+                    body
+                    author
+                    url
+                    tags
+                    slug
+                    image {
+                        url
+                    }
+                }
+            }
+            group(field: data___tags) {
+                fieldValue
+                totalCount
+            }
+        }
+        allPosts: allAirtable {
+            nodes {
+                data {
+                    title
+                    excerpt
+                    body
+                    author
+                    url
+                    tags
+                    slug
+                    categorisation
+                    image {
+                        url
+                    }
+                }
+            }
+            group(field: data___tags) {
+                fieldValue
+                totalCount
+            }
+        }
+        latestPosts: allAirtable(
+            sort: {order: DESC, fields: data___date}
+            filter: {data: {tags: {in: ["singapore", "malaysia", "china"]}}}
+        ) {
+            nodes {
+                data {
+                    title
+                    excerpt
+                    body
+                    author
+                    url
+                    tags
+                    slug
+                    image {
+                        url
+                    }
+                }
+            }
+            group(field: data___tags) {
+                fieldValue
+                totalCount
+            }
+        }
+        relatedPosts: allAirtable(
+            limit: 6
+            sort: { fields: [data___date], order: DESC }
+            filter: { data: { tags: { in: [$tag] } } }
+        ) {
+            nodes {
+                data {
+                    title
+                    excerpt
+                    body
+                    author
+                    url
+                    categorisation
+                    tags
+                    slug
+                    image {
+                        url
+                    }
+                }
+            }
+        }
+        airtable(data: {slug: {eq: $slug}}) {
+            data {
+                title
+                excerpt
+                body
+                date(formatString: "MMM DD, YYYY")
+                datetime
+                author
+                url
+                categorisation
+                tags
+                slug
+                image {
+                    url
+                }
+            }
+        }
+    }
+`

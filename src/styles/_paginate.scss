@@ -1,0 +1,12 @@
+.pagination {
+	align-items: center;
+	justify-content: center;
+	li {
+		a {
+			color: black;
+			&:hover {
+				color: opacify(black, 0.5);
+			}
+		}
+	}
+}

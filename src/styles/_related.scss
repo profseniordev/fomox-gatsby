@@ -1,0 +1,33 @@
+.related__post {
+	&-heading {
+		font-size: 14px;
+		font-weight: bolder;
+		text-transform: uppercase;
+		padding: 10px 0;
+		border-bottom: 1px solid $border-color;
+		margin-bottom: 20px;
+		color: #c1c2c5;
+	}
+
+	&-single {
+		margin-bottom: 3rem;
+	}
+
+	&-image {
+		img {
+			border-radius: 5px;
+			margin-bottom: 10px;
+		}
+	}
+
+	&-title {
+		font-weight: bold;
+		text-decoration: none;
+		font-size: 14px;
+		color: white;
+		font-weight: 800;
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}
